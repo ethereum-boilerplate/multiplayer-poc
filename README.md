@@ -6,3 +6,12 @@
 3) Optimizations need to be done to rate-limit who can call `move` and how often
 4) When the game loads the server only gives the client the position of the players that are close to the player playing the game - adjust `DRAW_DISTANCE` in `cloud.js` to change this. Room for improvement: this DRAW_DISTANCE needs to be set in live-query so when user gets continuous updates its also applied.
 5) Room for improvement: add join/leave logic so players can change rooms
+
+
+
+# Handling MANY players
+1) The best would be to limit number of connections for each server to a few hundred (depends on server specs)
+2) Let the user choose a "world" they want to join - each world runs on a separate server - kinda like Runescape
+3) Each world is a separate Moralis Server
+4) Worlds can be added in real time as the user base growth 
+5) Worlds can have different settings - for example PvP enabled/disabled

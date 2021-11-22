@@ -19,6 +19,7 @@ Moralis.Cloud.define("move", async (request) => {
   query.equalTo("player", user);
   const roomEntry = await query.first();
 
+  // if this player is not registered in this room - create a room entry for him with initial coordinates of 0,0
   if(!roomEntry){
     const roomEntry = new Room();
     roomEntry.set("player", user);
@@ -55,6 +56,8 @@ Moralis.Cloud.define("playersNearby", async (request) => {
   }
 
   const Room = Moralis.Object.extend("Room1");
+  
+  // get the information about the player that calls this function so we know his position and can calculate the nearby players based on that
   const query = new Moralis.Query(Room);
   query.equalTo("player", user);
   const userEntry = await query.first();

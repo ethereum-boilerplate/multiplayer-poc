@@ -1,15 +1,30 @@
-const MOVE_SPEED = 5;
+const MOVE_SPEED = 15;
 const DRAW_DISTANCE = 500;
+const MOVE_COOLOFF = 400; // milliseconds between registering new commands for same user on same core
+
+var lastMoved = {}
 
 Moralis.Cloud.define("move", async (request) => {
-  logger.info("Move called!");
-  logger.info(JSON.stringify(request));
 
   const user = request.user;
   if(!user)
   {
     return "You need to login!";
   }
+
+  if(lastMoved[user.id]){
+    let timeNow = new Date();
+    let lastTime = lastMoved[user.id];
+    let timeDiff = timeNow-lastTime
+    logger.info(timeDiff); 
+
+    if(timeDiff < MOVE_COOLOFF){
+        return "moves locked for this user - cooling off";
+    }
+  }
+  
+  lastMoved[user.id] = new Date()
+  
  
   const direction = request.params.direction;
   
@@ -19,7 +34,6 @@ Moralis.Cloud.define("move", async (request) => {
   query.equalTo("player", user);
   const roomEntry = await query.first();
 
-  // if this player is not registered in this room - create a room entry for him with initial coordinates of 0,0
   if(!roomEntry){
     const roomEntry = new Room();
     roomEntry.set("player", user);
@@ -42,6 +56,8 @@ Moralis.Cloud.define("move", async (request) => {
   }
 
   await roomEntry.save();
+
+  return "move registered";
   
 });
 
@@ -56,8 +72,6 @@ Moralis.Cloud.define("playersNearby", async (request) => {
   }
 
   const Room = Moralis.Object.extend("Room1");
-  
-  // get the information about the player that calls this function so we know his position and can calculate the nearby players based on that
   const query = new Moralis.Query(Room);
   query.equalTo("player", user);
   const userEntry = await query.first();

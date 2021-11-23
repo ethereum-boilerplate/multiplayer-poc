@@ -35,6 +35,9 @@
     var gameInitialized = false;
 
     const PLAYER_SIZE = 50;
+    const MOVE_COOLOFF = 300;
+
+    var lastMove = 0;
 
 
     async function login(){
@@ -87,24 +90,19 @@
       let subscription = await query.subscribe();
 
       subscription.on('update', (object) => {
-        console.log('object updated');
-        console.log(object.id + " " + object.get("x") + " " + object.get("y"));
 
         if(!users[object.id])
           users[object.id] = this.add.rectangle(object.get("x"), object.get("y"), PLAYER_SIZE, PLAYER_SIZE, 0x6666ff);
         else{
           let user = users[object.id];
-          console.log(user)
           user.setPosition(object.get("x"),object.get("y"))
         }
       });
 
       await Moralis.Cloud.run("move", {direction:null}); //just to register the player
+
       let nearbyPlayers = await Moralis.Cloud.run("playersNearby"); 
-      console.log("nearby players found " + nearbyPlayers.length)
       nearbyPlayers.forEach(player => {
-        console.log(player.get("player"))
-        console.log(player.id,player.get("x"),player.get("y"))
         users[player.id] = this.add.rectangle(player.get("x"), player.get("y"), PLAYER_SIZE, PLAYER_SIZE, 0x6666ff);
       });
 
@@ -119,13 +117,20 @@
       cursors = this.input.keyboard.createCursorKeys();
       const params =  { cursors: cursors };
 
+      // dont move if cool off hasnt passed
+      if(new Date()-lastMove < MOVE_COOLOFF)
+        return
+      
+      lastMove = new Date();
+
       if (this.wKey.isDown) {
 
         if(!buttonsLocked["up"]){
           console.log('W is pressed');
 
           buttonsLocked["up"]=true;
-          await Moralis.Cloud.run("move", {direction:"up"});
+          let moveResult = await Moralis.Cloud.run("move", {direction:"up"});
+          console.log(moveResult)
           buttonsLocked["up"]=false;
         }
 
@@ -135,7 +140,8 @@
           console.log('A is pressed');
 
           buttonsLocked["left"]=true;
-          await Moralis.Cloud.run("move", {direction:"left"});
+          let moveResult = await Moralis.Cloud.run("move", {direction:"left"});
+          console.log(moveResult)
           buttonsLocked["left"]=false;
         }
       }
@@ -144,7 +150,8 @@
           console.log('S is pressed');
 
           buttonsLocked["down"]=true;
-          await Moralis.Cloud.run("move", {direction:"down"});
+          let moveResult = await Moralis.Cloud.run("move", {direction:"down"});
+          console.log(moveResult)
           buttonsLocked["down"]=false;
         }
       }
@@ -153,7 +160,8 @@
           console.log('D is pressed');
 
           buttonsLocked["right"]=true;
-          await Moralis.Cloud.run("move", {direction:"right"});
+          let moveResult = await Moralis.Cloud.run("move", {direction:"right"});
+          console.log(moveResult)
           buttonsLocked["right"]=false;
         }
       }

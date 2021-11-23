@@ -1,5 +1,9 @@
 # multiplayer-poc
 
+This is an implementation of a basic web3 game that logs in user with a wallet like Metamask and allows for real-time movement in game.
+
+NodeJS is single-threaded and therefore needs to be deployed as a cluster to make use of all cores. This application is automatically deployed as several processes (one of each core) and load balanced accordingly in order to take advantage of the whole machine.
+
 
 1) All moves go through the backend - no cheating allowed and NFTs/tokens can be awarded safely in the `move` function of cloud.js
 2) Client lag needs to be compensated by the game engine using movement extrapolation and prediction - [Read more](https://www.gabrielgambetta.com/client-server-game-architecture.html)
@@ -16,3 +20,5 @@
 3) Each world is a separate Moralis Server
 4) Worlds can be added in real time as the user base growth 
 5) Worlds can have different settings - for example PvP enabled/disabled
+
+

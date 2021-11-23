@@ -6,6 +6,7 @@
 3) Optimizations need to be done to rate-limit who can call `move` and how often
 4) When the game loads the server only gives the client the position of the players that are close to the player playing the game - adjust `DRAW_DISTANCE` in `cloud.js` to change this. Room for improvement: this DRAW_DISTANCE needs to be set in live-query so when user gets continuous updates its also applied.
 5) Room for improvement: add join/leave logic so players can change rooms
+6) Server has rate limits so users can't spam endless moves - rate limit is ensured by `MOVE_COOLOFF` constant in `cloud.js` - this cooloff is per core in the server. There is also `MOVE_COOLOFF` on client side to ensure the client is rate limiting itself.
 
 
 

@@ -1,3 +1,6 @@
+
+// IMPORTANT DO NOT HAVE ANY STATE IN THIS CODE!!!
+
 const MOVE_SPEED = 15;
 const DRAW_DISTANCE = 500;
 const MOVE_COOLOFF = 400; // milliseconds between registering new commands for same user on same core
